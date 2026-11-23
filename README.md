@@ -1,3 +1,7 @@
+
+#Meu video
+https://drive.google.com/drive/folders/1edCl-XeCCsaHmWStqAkEi-dyvfbpU9Zd?usp=sharing
+
 # EstuLanches
 
 Plataforma integrada para gerenciamento de cardápio digital e fila de atendimento em cantinas escolares. O sistema oferece aos alunos a conveniência de realizar pedidos e monitorar o status de preparo diretamente pelo celular, enquanto disponibiliza à equipe da cantina um painel em tempo real para controle da fila, despacho de pedidos e gestão automatizada do estoque.
