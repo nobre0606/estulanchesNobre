@@ -1,0 +1,112 @@
+--progress is a global compose flag, better use `docker compose --progress xx build ...
+ Image estulanches-app:1.0.0 Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 544B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 4.26kB done
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 DONE 0.6s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:572cebbc2b15e6f84c077742952674889cb63cd5e9b80abdffcbe587b6f19183
+#4 resolve docker.io/docker/dockerfile:1@sha256:572cebbc2b15e6f84c077742952674889cb63cd5e9b80abdffcbe587b6f19183 0.0s done
+#4 CACHED
+
+#5 [internal] load metadata for docker.io/library/node:22-alpine
+#5 DONE 0.5s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 240B done
+#6 DONE 0.0s
+
+#7 [web-build 1/6] FROM docker.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a
+#7 resolve docker.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a 0.0s done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 3.72kB done
+#8 DONE 0.0s
+
+#9 [api-build 10/10] RUN npx tsc -p tsconfig.build.json
+#9 CACHED
+
+#10 [web-build 2/6] WORKDIR /web
+#10 CACHED
+
+#11 [api-build  4/10] COPY backend/package*.json ./
+#11 CACHED
+
+#12 [web-build 5/6] COPY frontend/ ./
+#12 CACHED
+
+#13 [web-build 6/6] RUN npm run build
+#13 CACHED
+
+#14 [runtime  5/10] COPY --from=api-build --chown=node:node /app/package.json ./
+#14 CACHED
+
+#15 [runtime  8/10] COPY --from=web-build --chown=node:node /web/dist ./public
+#15 CACHED
+
+#16 [runtime  4/10] COPY --from=prod-deps --chown=node:node /app/node_modules ./node_modules
+#16 CACHED
+
+#17 [api-build  2/10] RUN apk add --no-cache openssl
+#17 CACHED
+
+#18 [web-build 4/6] RUN npm ci
+#18 CACHED
+
+#19 [api-build  8/10] COPY backend/tsconfig*.json ./
+#19 CACHED
+
+#20 [web-build 3/6] COPY frontend/package*.json ./
+#20 CACHED
+
+#21 [prod-deps 1/1] RUN npm prune --omit=dev
+#21 CACHED
+
+#22 [api-build  7/10] RUN npx prisma generate
+#22 CACHED
+
+#23 [api-build  3/10] WORKDIR /app
+#23 CACHED
+
+#24 [api-build  9/10] COPY backend/src ./src
+#24 CACHED
+
+#25 [api-build  6/10] COPY backend/prisma ./prisma
+#25 CACHED
+
+#26 [runtime  7/10] COPY --from=api-build --chown=node:node /app/dist ./dist
+#26 CACHED
+
+#27 [api-build  5/10] RUN npm ci
+#27 CACHED
+
+#28 [runtime  6/10] COPY --from=api-build --chown=node:node /app/prisma ./prisma
+#28 CACHED
+
+#29 [runtime  9/10] COPY --chown=node:node backend/docker-entrypoint.sh ./
+#29 CACHED
+
+#30 [runtime 10/10] RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
+#30 DONE 0.2s
+
+#31 exporting to image
+#31 exporting layers 0.1s done
+#31 exporting manifest sha256:9a03a6c6b37b43d85a031b7f2e256d94c72cc13c05d0074ec8c67efa5da30206 0.0s done
+#31 exporting config sha256:973fa9e5ff3141cc55ac0b64ccf76e6514bee88af2795b9a59778cb9c806d4f6 0.0s done
+#31 exporting attestation manifest sha256:3c91f7cedbec45697aa434414d330a7e13b8ebb83a14a96f167d9f8af4ef13db 0.0s done
+#31 exporting manifest list sha256:2c79e2270b9aefd793c7bf0aa37b5b0cbce93263daa91baacfb4fd0f92b27d6b 0.0s done
+#31 naming to docker.io/library/estulanches-app:1.0.0
+#31 naming to docker.io/library/estulanches-app:1.0.0 done
+#31 unpacking to docker.io/library/estulanches-app:1.0.0 0.0s done
+#31 DONE 0.3s
+
+#32 resolving provenance for metadata file
+#32 DONE 0.0s
+ Image estulanches-app:1.0.0 Built 

@@ -1,0 +1,13 @@
+# Não enviar para o build: deixa o build rápido e impede que segredos entrem na imagem
+**/node_modules
+**/dist
+**/coverage
+.git
+.gitignore
+.env
+.env.*
+*.log
+docs
+design-system
+README.md
+CLAUDE.md

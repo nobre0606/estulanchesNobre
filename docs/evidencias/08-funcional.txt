@@ -1,0 +1,34 @@
+# Validação do Fluxo Funcional Ponta a Ponta — 2026-11-22 12:55:26
+# Credenciais carregadas das variáveis de ambiente (.env); tokens de sessão ofuscados.
+
+## Etapa 1. Autenticação do perfil discente — POST /api/auth/login
+HTTP 200  token=eyJhbGciOiJIUzI1NiIs...  usuario={"id":"e40a1c16-0add-4ecb-bca8-0d10715a28c0","nome":"Aluno Demo","email":"aluno@estulanches.local","papel":"ALUNO"}
+
+## Etapa 2. Consulta ao catálogo de produtos ativos — GET /api/produtos
+  #7 Achocolatado R$ 3.50 (estoque 50)
+  #5 Suco natural R$ 5.00 (estoque 35)
+  #6 Água mineral R$ 3.00 (estoque 80)
+  #9 Bolo de cenoura R$ 4.50 (estoque 20)
+  #8 Brigadeiro R$ 3.00 (estoque 45)
+  #1 Coxinha R$ 6.50 (estoque 40)
+  #3 Esfiha de carne R$ 5.50 (estoque 30)
+  #4 Misto quente R$ 7.00 (estoque 2)
+  #2 Pão de queijo R$ 4.00 (estoque 60)
+
+## Etapa 3. Submissão do pedido pelo aluno — POST /api/pedidos (2x Coxinha + 1x Suco; tentativa de injeção de preço arbitrário)
+Body: {"itens":[{"produtoId":1,"quantidade":2,"precoUnitario":0.01},{"produtoId":5,"quantidade":1}],"observacao":"Sem guardanapo"}
+HTTP 201  pedido=#1  status=RECEBIDO  total=R$ 18.00  (cálculo oficial: 2x6,50 + 1x5,00 = 18,00)
+Atualização atômica do estoque (Coxinha): saldo de 40 reduzido para 38
+
+## Etapa 4. Acesso administrativo da cantina — POST /api/auth/login
+HTTP 200  token=eyJhbGciOiJIUzI1NiIs...  papel=ADMIN
+
+## Etapa 5. Atualização da fila de preparo pela cantina — PATCH /api/pedidos/1/status
+-> EM_PREPARO: HTTP 200  status=EM_PREPARO
+-> PRONTO: HTTP 200  status=PRONTO
+
+## Etapa 6. Teste de rejeição de fluxo ilícito (PRONTO -> RECEBIDO) — expectativa de erro 422
+HTTP 422  {"erro":{"codigo":"TRANSICAO_INVALIDA","mensagem":"Não é possível mudar de PRONTO para RECEBIDO."}}
+
+## Etapa 7. Consulta de conferência pelo titular — GET /api/pedidos/meus
+  #1 PRONTO total R$ 18.00 itens=2

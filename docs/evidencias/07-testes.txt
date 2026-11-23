@@ -1,0 +1,149 @@
+ Container estulanches-db-test-1 Creating 
+ Container estulanches-db-test-1 Created 
+ Container estulanches-db-test-1 Starting 
+ Container estulanches-db-test-1 Started 
+ Image estulanches-tests Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 543B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 4.26kB done
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 DONE 0.3s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:572cebbc2b15e6f84c077742952674889cb63cd5e9b80abdffcbe587b6f19183
+#4 resolve docker.io/docker/dockerfile:1@sha256:572cebbc2b15e6f84c077742952674889cb63cd5e9b80abdffcbe587b6f19183 0.0s done
+#4 CACHED
+
+#5 [internal] load metadata for docker.io/library/node:22-alpine
+#5 DONE 0.2s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 240B done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 30.12kB 0.0s done
+#7 DONE 0.0s
+
+#8 [api-build  1/10] FROM docker.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a
+#8 resolve docker.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a 0.0s done
+#8 DONE 0.0s
+
+#9 [api-build  7/10] RUN npx prisma generate
+#9 CACHED
+
+#10 [api-build  6/10] COPY backend/prisma ./prisma
+#10 CACHED
+
+#11 [api-build  9/10] COPY backend/src ./src
+#11 CACHED
+
+#12 [api-build  3/10] WORKDIR /app
+#12 CACHED
+
+#13 [api-build  4/10] COPY backend/package*.json ./
+#13 CACHED
+
+#14 [api-build  5/10] RUN npm ci
+#14 CACHED
+
+#15 [api-build  8/10] COPY backend/tsconfig*.json ./
+#15 CACHED
+
+#16 [api-build  2/10] RUN apk add --no-cache openssl
+#16 CACHED
+
+#17 [api-build 10/10] RUN npx tsc -p tsconfig.build.json
+#17 CACHED
+
+#18 [test 1/2] COPY backend/vitest.config.mts ./
+#18 DONE 0.0s
+
+#19 [test 2/2] COPY backend/tests ./tests
+#19 DONE 0.1s
+
+#20 exporting to image
+#20 exporting layers
+#20 exporting layers 12.5s done
+#20 exporting manifest sha256:6d40ccbfcabf40acf272b32c3c60c059f81d327a4882517007122f961b1bf14f 0.0s done
+#20 exporting config sha256:622cbe90545329b1061b8c6682c708639332dffd4c7d1b48d834c39a7dc8bf42 0.0s done
+#20 exporting attestation manifest sha256:3ac8579306cef929ab3ccbd1a37c979224e7780d9b7796b2bad4ac0a383f18e2 0.0s done
+#20 exporting manifest list sha256:c28c9c88c16b413ca9370686773161977ecacb52b62086ad7789d3b5317fdafb 0.0s done
+#20 naming to docker.io/library/estulanches-tests:latest done
+#20 unpacking to docker.io/library/estulanches-tests:latest
+#20 unpacking to docker.io/library/estulanches-tests:latest 4.5s done
+#20 DONE 17.2s
+
+#21 resolving provenance for metadata file
+#21 DONE 0.0s
+ Image estulanches-tests Built 
+ Container estulanches-db-test-1 Waiting 
+ Container estulanches-db-test-1 Healthy 
+ Container estulanches-tests-run-bfac009ea19c Creating 
+ Container estulanches-tests-run-bfac009ea19c Created 
+
+> estulanches-backend@1.0.0 test:all
+> vitest run --coverage
+
+
+ RUN  v4.1.12 /app
+      Coverage enabled with v8
+
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "estulanches_test", schema "public" at "db-test:5432"
+
+2 migrations found in prisma/migrations
+
+Applying migration `20261122000000_init`
+Applying migration `20261122000100_check_constraints`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20261122000000_init/
+    └─ migration.sql
+  └─ 20261122000100_check_constraints/
+    └─ migration.sql
+      
+All migrations have been successfully applied.
+ ✓  unit  tests/unit/pedido.test.ts (14 tests) 14ms
+ ✓  unit  tests/unit/schemas.test.ts (12 tests) 16ms
+ ✓  unit  tests/unit/senha.test.ts (2 tests) 341ms
+ ✓  integration  tests/integration/pedidos.test.ts (15 tests) 762ms
+ ✓  integration  tests/integration/produtos.test.ts (14 tests) 526ms
+ ✓  integration  tests/integration/auth.test.ts (7 tests) 493ms
+
+ Test Files  6 passed (6)
+      Tests  64 passed (64)
+   Start at  15:54:50
+   Duration  5.28s (transform 264ms, setup 24ms, import 1.23s, tests 2.15s, environment 1ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   97.19 |    93.33 |     100 |   97.89 |                   
+ domain            |     100 |      100 |     100 |     100 |                   
+  erros.ts         |     100 |      100 |     100 |     100 |                   
+  pedido.ts        |     100 |      100 |     100 |     100 |                   
+  senha.ts         |     100 |      100 |     100 |     100 |                   
+ modules/auth      |     100 |      100 |     100 |     100 |                   
+  service.ts       |     100 |      100 |     100 |     100 |                   
+ ...les/categorias |     100 |      100 |     100 |     100 |                   
+  service.ts       |     100 |      100 |     100 |     100 |                   
+ modules/pedidos   |   95.34 |    86.95 |     100 |   94.87 |                   
+  service.ts       |   95.34 |    86.95 |     100 |   94.87 | 100,127           
+ modules/produtos  |   94.44 |       90 |     100 |     100 |                   
+  service.ts       |   94.44 |       90 |     100 |     100 | 37                
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 97.19% ( 104/107 )
+Branches     : 93.33% ( 56/60 )
+Functions    : 100% ( 35/35 )
+Lines        : 97.89% ( 93/95 )
+================================================================================

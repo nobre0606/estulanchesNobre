@@ -1,0 +1,103 @@
+# =============================================================================
+# EstuLanches — orquestração dos containers
+#   docker compose up -d                          → sobe app + banco
+#   docker compose --profile test run --rm tests  → roda os testes
+# =============================================================================
+name: estulanches
+
+services:
+  # ---------------------------------------------------------------------------
+  # Banco de dados PostgreSQL
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine          # versão fixa, imagem pequena
+    env_file: .env                     # POSTGRES_DB / USER / PASSWORD vêm do .env
+    volumes:
+      # Volume nomeado: os dados sobrevivem a "docker compose down" e "up"
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # "$$" escapa o "$" para a variável ser lida DENTRO do container
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    # SEM "ports": o banco não é exposto no host. Só a app o alcança pela rede interna.
+    networks:
+      - backend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  # ---------------------------------------------------------------------------
+  # Aplicação (API Fastify + front React compilado) — uma única imagem
+  # ---------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      target: runtime                  # estágio final do Dockerfile (produção)
+    image: estulanches-app:1.0.0       # tag versionada: permite rollback para a anterior
+    env_file: .env                     # toda configuração por variável de ambiente
+    ports:
+      - "${APP_PORT:-3000}:3000"       # única porta publicada no host
+    depends_on:
+      db:
+        condition: service_healthy     # só sobe quando o banco responde ao pg_isready
+    networks:
+      - backend                        # fala com o banco
+      - web                            # rede com saída, necessária para publicar a porta
+    restart: unless-stopped            # volta sozinha se cair (menos se parada manualmente)
+    deploy:
+      resources:
+        limits:                        # um bug não consome a máquina inteira
+          memory: 512m
+          cpus: "1.0"
+
+  # ---------------------------------------------------------------------------
+  # Banco descartável só para os testes (profile "test" — não sobe no "up" normal)
+  # ---------------------------------------------------------------------------
+  db-test:
+    profiles: ["test"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: estulanches_test
+      POSTGRES_USER: teste
+      POSTGRES_PASSWORD: teste         # banco efêmero e isolado, sem dado real
+    tmpfs:
+      - /var/lib/postgresql/data       # em memória: some ao parar, testes sempre limpos
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U teste -d estulanches_test"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+    networks:
+      - backend
+
+  # ---------------------------------------------------------------------------
+  # Executor dos testes (unitários + integração + cobertura)
+  # ---------------------------------------------------------------------------
+  tests:
+    profiles: ["test"]
+    build:
+      context: .
+      target: test                     # estágio de testes do Dockerfile
+    environment:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://teste:teste@db-test:5432/estulanches_test
+    depends_on:
+      db-test:
+        condition: service_healthy
+    networks:
+      - backend
+
+networks:
+  # Rede interna: sem acesso à internet; o banco só existe aqui dentro
+  backend:
+    internal: true
+  # Rede comum, só para a aplicação publicar a porta 3000 no host
+  web: {}
+
+volumes:
+  pgdata:

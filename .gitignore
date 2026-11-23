@@ -1,0 +1,16 @@
+# Dependências e builds
+node_modules/
+dist/
+coverage/
+*.log
+
+# Segredos: só o .env.example vai para o repositório
+.env
+.env.*
+!.env.example
+
+# Editor / SO
+.DS_Store
+Thumbs.db
+
+CLAUDE.md

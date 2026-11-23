@@ -1,0 +1,26 @@
+app-1  | [entrypoint] Aplicando migrations do banco...
+app-1  | Prisma schema loaded from prisma/schema.prisma
+app-1  | Datasource "db": PostgreSQL database "estulanches", schema "public" at "db:5432"
+app-1  | 
+app-1  | 2 migrations found in prisma/migrations
+app-1  | 
+app-1  | Applying migration `20261122000000_init`
+app-1  | Applying migration `20261122000100_check_constraints`
+app-1  | 
+app-1  | The following migration(s) have been applied:
+app-1  | 
+app-1  | migrations/
+app-1  |   └─ 20261122000000_init/
+app-1  |     └─ migration.sql
+app-1  |   └─ 20261122000100_check_constraints/
+app-1  |     └─ migration.sql
+app-1  |       
+app-1  | All migrations have been successfully applied.
+app-1  | [entrypoint] SEED=true: populando dados iniciais (idempotente)...
+app-1  | Seed concluído.
+app-1  | [entrypoint] Iniciando o servidor...
+app-1  | {"level":30,"time":1795362854929,"pid":1,"hostname":"3acc25619e71","msg":"Server listening at http://127.0.0.1:3000"}
+app-1  | {"level":30,"time":1795362854930,"pid":1,"hostname":"3acc25619e71","msg":"Server listening at http://172.19.0.2:3000"}
+app-1  | {"level":30,"time":1795362854930,"pid":1,"hostname":"3acc25619e71","msg":"Server listening at http://172.18.0.3:3000"}
+app-1  | {"level":30,"time":1795362857642,"pid":1,"hostname":"3acc25619e71","reqId":"req-1","req":{"method":"GET","url":"/api/health","host":"127.0.0.1:3000","remoteAddress":"127.0.0.1","remotePort":37068},"msg":"incoming request"}
+app-1  | {"level":30,"time":1795362857675,"pid":1,"hostname":"3acc25619e71","reqId":"req-1","res":{"statusCode":200},"responseTime":32.75262699999985,"msg":"request completed"}

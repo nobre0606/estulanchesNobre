@@ -1,0 +1,95 @@
+// Schema do EstuLanches.
+// Modelos em PascalCase no código; tabelas e colunas em snake_case no banco (@@map/@map).
+
+generator client {
+  provider      = "prisma-client-js"
+  // linux-musl-openssl-3.0.x = Alpine (imagem Docker); native = máquina de desenvolvimento
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Papel {
+  ADMIN
+  ALUNO
+}
+
+enum StatusPedido {
+  RECEBIDO
+  EM_PREPARO
+  PRONTO
+  ENTREGUE
+  CANCELADO
+}
+
+model Usuario {
+  id        String   @id @default(uuid()) @db.Uuid
+  nome      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(150)
+  senhaHash String   @map("senha_hash") @db.VarChar(255)
+  papel     Papel    @default(ALUNO)
+  criadoEm  DateTime @default(now()) @map("criado_em") @db.Timestamptz
+  pedidos   Pedido[]
+
+  @@map("usuarios")
+}
+
+model Categoria {
+  id       Int       @id @default(autoincrement())
+  nome     String    @unique @db.VarChar(60)
+  produtos Produto[]
+
+  @@map("categorias")
+}
+
+model Produto {
+  id           Int          @id @default(autoincrement())
+  nome         String       @db.VarChar(100)
+  descricao    String?
+  // Dinheiro sempre em numeric(10,2), nunca float
+  preco        Decimal      @db.Decimal(10, 2)
+  estoque      Int          @default(0)
+  // Exclusão lógica: produto desativado continua no histórico de pedidos
+  ativo        Boolean      @default(true)
+  categoriaId  Int          @map("categoria_id")
+  categoria    Categoria    @relation(fields: [categoriaId], references: [id])
+  criadoEm     DateTime     @default(now()) @map("criado_em") @db.Timestamptz
+  atualizadoEm DateTime     @updatedAt @map("atualizado_em") @db.Timestamptz
+  itens        ItemPedido[]
+
+  @@index([categoriaId])
+  @@map("produtos")
+}
+
+model Pedido {
+  id           Int          @id @default(autoincrement())
+  usuarioId    String       @map("usuario_id") @db.Uuid
+  usuario      Usuario      @relation(fields: [usuarioId], references: [id])
+  status       StatusPedido @default(RECEBIDO)
+  total        Decimal      @db.Decimal(10, 2)
+  observacao   String?      @db.VarChar(200)
+  criadoEm     DateTime     @default(now()) @map("criado_em") @db.Timestamptz
+  atualizadoEm DateTime     @updatedAt @map("atualizado_em") @db.Timestamptz
+  itens        ItemPedido[]
+
+  @@index([status])
+  @@index([usuarioId])
+  @@map("pedidos")
+}
+
+model ItemPedido {
+  id            Int     @id @default(autoincrement())
+  pedidoId      Int     @map("pedido_id")
+  pedido        Pedido  @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  produtoId     Int     @map("produto_id")
+  produto       Produto @relation(fields: [produtoId], references: [id])
+  quantidade    Int
+  // Preço "da hora": cópia do preço no momento do pedido, para o histórico não mudar
+  precoUnitario Decimal @map("preco_unitario") @db.Decimal(10, 2)
+  subtotal      Decimal @db.Decimal(10, 2)
+
+  @@map("itens_pedido")
+}
